@@ -1,163 +1,233 @@
-
 var M;
-class Main implements EventListenerObject{
-    public usuarios: Array<Usuario>= new Array<Usuario>();
-  
 
-    private buscarPersonas() {
-
+class Main implements EventListenerObject,HttpResponse {
+    framework: Framework = new Framework();
+    showDevices: Boolean;
    
-        for (let u of this.usuarios) {
-            console.log(u.mostrar(),this.usuarios.length);
-        }
+    constructor() {
+        this.showDevices = false;
+        document.getElementById("deviceId").style.display = 'none';
+        document.getElementById("deviceIdDel").style.display = 'none';     
     }
-    private buscarDevices() {
-        
-        let xmlRequest = new XMLHttpRequest();
-        
-        xmlRequest.onreadystatechange = () => {
-     
-            if (xmlRequest.readyState == 4) {
-                if(xmlRequest.status==200){
-                    console.log(xmlRequest.responseText, xmlRequest.readyState);    
-                    let respuesta = xmlRequest.responseText;
-                    let datos:Array<Device> = JSON.parse(respuesta);
-                    
-                    let ul = document.getElementById("listaDisp"); 
+    manejarRespuesta(respueta: string) {
+        var lista: Array<Device> = JSON.parse(respueta);
 
-                    for (let d of datos) {
-                        let itemList =
-                            ` <li class="collection-item avatar">
-                        <img src="./static/images/lightbulb.png" alt="" class="circle">
-                        <span class="title">${d.name}</span>
+        
+        var ulDisp = document.getElementById("listaDisp");
+        for (var disp of lista) {
+            var rangeMessage : string;
+            var item: string = `<li class="collection-item avatar" id="li_${disp.id}">`;
+                    if(disp.type==0){
+                        rangeMessage = "Intensidad de lámpara";
+                        item+=  '<img src="static/images/lightbulb.png" alt = "" class="circle" >'
+                    } else {
+                        rangeMessage = "Apertura de persiana";
+                        item+=  '<img src="static/images/window.png" alt = "" class="circle" >'
+                    }                  
+                        item+=`<span class="titulo">${disp.name}</span>
                         <p>
-                         ${d.description}
+                            ${disp.description}
+                        </p>
+                        <p class="range-field">
+                            <label>${rangeMessage}</label> 
+                            <input type="range" id="int_${disp.id}" min="0" max="100" value="${disp.intensity}"/>
                         </p>
                         <a href="#!" class="secondary-content">
-                        <div class="switch">
-                        <label>
-                          Off
-                          <input type="checkbox"`;
-                          itemList +=`nuevoAtt="${d.id}" id="cb_${d.id}"`
-                        if (d.state) {
-                            itemList+= ` checked `
-                        }
-                        
-                        itemList+= `>
-                          <span class="lever"></span>
-                          On
-                        </label>
-                      </div>
+                            <div class="switch">
+                                <label>
+                                    Apagado
+                                    `;
+                                    if (disp.state) {
+                                        item +=`<input type="checkbox" checked id="ck_${disp.id}">`;
+                                    } else {
+                                        item +=`<input type="checkbox" id="ck_${disp.id}" >`;
+                                    }
+                                    item += `
+                                    <span class="lever"></span>
+                                    Encendido
+                                </label>
+                            </div>
                         </a>
-                      </li>`
-                       
-                        ul.innerHTML += itemList;
 
-                    }
-                    for (let d of datos) {
-                        let checkbox = document.getElementById("cb_" + d.id);
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal2" id="ed_${disp.id}"><i class="material-icons right">edit</i>Editar</a>
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal3" id="del_${disp.id}"><i class="material-icons right">delete</i>Eliminar</a>
 
-                        checkbox.addEventListener("click", this);
-                    }
-
-                }else{
-                    console.log("no encontre nada");
-                }
-            }
+                        </li>`;
             
-        }
-        xmlRequest.open("GET","http://localhost:8000/devices",true)
-        xmlRequest.send();
-    }
-
-    private ejecutarPost(id:number,state:boolean) {
-        let xmlRequest = new XMLHttpRequest();
-
-        xmlRequest.onreadystatechange = () => {
-            if (xmlRequest.readyState == 4) {
-                if (xmlRequest.status == 200) {
-                    console.log("llego resputa",xmlRequest.responseText);        
-                } else {
-                    alert("Salio mal la consulta");
-                }
-            }
-            
-            
-
+            ulDisp.innerHTML += item;
         }
         
-       
-        xmlRequest.open("POST", "http://localhost:8000/device", true)
-        xmlRequest.setRequestHeader("Content-Type", "application/json");
-        let s = {
-            id: id,
-            state: state   };
-        xmlRequest.send(JSON.stringify(s));
-    }
+        // Suscribir inputs de los dispositivos a eventos
+        for (var disp of lista) {
+            var checkPrender = document.getElementById("ck_" + disp.id);
+            checkPrender.addEventListener("click", this);
 
-    private cargarUsuario(): void{
-        let iNombre =<HTMLInputElement> document.getElementById("iNombre");
-        let iPassword = <HTMLInputElement>document.getElementById("iPassword");
-        let pInfo = document.getElementById("pInfo");
-        if (iNombre.value.length > 3 && iPassword.value.length > 3) {
-            let usuari1: Usuario = new Usuario(iNombre.value, "user", iPassword.value,23);
-            this.usuarios.push(usuari1);
-            iNombre.value = "";
-            iPassword.value = "";
-           
-            
-            pInfo.innerHTML = "Se cargo correctamente!";
-            pInfo.className ="textoCorrecto";
-            
-        } else {
-            pInfo.innerHTML = "Usuairo o contraseña incorrecta!!!";
-            pInfo.className ="textoError";
+            var buttonDelete = document.getElementById("del_" + disp.id);
+            buttonDelete.addEventListener("click", this);
+
+            var buttonEdit = document.getElementById("ed_" + disp.id);
+            buttonEdit.addEventListener("click", this);
+
+            var rangeButton = document.getElementById("int_" + disp.id);
+            rangeButton.addEventListener("change", this);
         }
-        
         
     }
 
-    handleEvent(object: Event): void {
-        let elemento = <HTMLElement>object.target;
-        
-        
-        if ("btnListar" == elemento.id) {
-            this.buscarDevices();
+    // Callback para completar los valores de un dispositivo en el modal de edición
+    mostrarDatosEdit(response: string) {
+        var lista: Array<Device> = JSON.parse(response);
+        if (lista.length > 0) {
+            var device = lista[0];
+            var id = <HTMLInputElement>document.getElementById("deviceId");
+            id.innerHTML = String(device.id);
+            var name = <HTMLInputElement>document.getElementById("deviceNameEdit");
+            name.value = device.name;
+            var description = <HTMLInputElement>document.getElementById("deviceDescriptionEdit");
+            description.value = device.description;
+            var type = <HTMLInputElement>document.getElementById("deviceTypeEdit");
+            type.value = String(device.type);
 
-            
-        } else if ("btnGuardar" == elemento.id) {
-            this.cargarUsuario();
-        } else if (elemento.id.startsWith("cb_")) {
-            let checkbox = <HTMLInputElement>elemento;
-            console.log(checkbox.getAttribute("nuevoAtt"),checkbox.checked, elemento.id.substring(3, elemento.id.length));
-            
-            this.ejecutarPost(parseInt(checkbox.getAttribute("nuevoAtt")),checkbox.checked);
+            var elems = document.getElementById("deviceTypeEdit");
+            var instances = M.FormSelect.init(elems,{});
         }
-
     }
 
+    // Método para obtener todos los dispositivos de la base de datos
+    obtenerDispositivos() {
+        var listDevices = document.getElementById('listaDisp');
+        listDevices.innerHTML = '';
+        this.framework.ejecutarBackEnd("GET", "http://localhost:8000/devices", this, false);
+    }
+
+    // Método para actualizar el estado del dispositivo (encendido/apagado)
+    updateStatus(id, status) {
+        var item = { "id": id, "status": status }
+        this.framework.ejecutarBackEnd("POST", "http://localhost:8000/updateStatus", this, false, item)
+    }
+
+    // Método para actualizar el range del dispositivo (intensidad de lámpara o apertura de persiana)
+    updateIntensity(id, intensity) {
+        var item = { "id": id, "intensity": intensity }
+        this.framework.ejecutarBackEnd("POST", "http://localhost:8000/updateIntensity", this, false, item)
+    }
+
+    // Método para eliminar dispositivos de la base de datos
+    deleteDevice(id) {
+        var item = { "id": id }
+        this.framework.ejecutarBackEnd("POST", "http://localhost:8000/deleteDevice", this, false, item)
+    }
+
+    // Método para agregar un nuevo dispositivo en la base de datos
+    addDevice(deviceName, deviceDescription, deviceStatus, deviceType, deviceIntensity) {
+        var device = { 
+            "name": deviceName,
+            "description": deviceDescription,
+            "state": deviceStatus,
+            "type": deviceType,
+            "intensity": deviceIntensity
+        }
+        this.framework.ejecutarBackEnd("POST", "http://localhost:8000/addDevice", this, false, device)
+    }
+
+    // Método para obtener un dispositivo de la base de datos
+    getDeviceInfo(id) {
+        this.framework.ejecutarBackEnd("GET", "http://localhost:8000/getDeviceInfo?id="+id, this, true)
+    }
+
+    // Método para actualizar un dispositivo en la base de datos
+    updateDevice(id, deviceName, deviceDescription, deviceType) {
+        var device = { 
+            "id": id,
+            "name": deviceName,
+            "description": deviceDescription,
+            "type": deviceType
+        }
+        this.framework.ejecutarBackEnd("POST", "http://localhost:8000/updateDevice", this, false, device)
+    }
+
+    handleEvent(event):void {
+        let elemento =<HTMLInputElement> event.target;     
+        if (event.target.id == "btnListar") {   
+            // Lógica asociada al click en el botón LISTAR
+            this.obtenerDispositivos(); 
+            this.showDevices = true;       
+        } else if (elemento.id.startsWith("ck_")) {       
+            // Lógica asociada al click en el spinner del dispositivo  
+            this.updateStatus(elemento.id.replace('ck_', ''), elemento.checked)
+        } else if (elemento.id.startsWith("del_")) {
+            // Lógica asociada al click en el botón Eliminar del dispositivo  
+            var id = <HTMLInputElement>document.getElementById("deviceIdDel");
+            id.innerHTML = elemento.id.replace('del_', '');
+        } else if (event.target.id == "btnEliminar"){
+            // Lógica asociada al click en el botón Eliminar del modal
+            var deviceId = (<HTMLInputElement>document.getElementById("deviceIdDel")).innerHTML;
+            var listDevices = document.getElementById('listaDisp');
+            var device = document.getElementById('li_' + deviceId);
+            listDevices.removeChild(device);
+            this.deleteDevice(deviceId);
+            alert("¡Dispositivo eliminado exitósamente!")
+        } else if (event.target.id == "btnAgregar") {
+            // Lógica  asociada al click en el botón Agregar del modal
+            var deviceName = (<HTMLInputElement>document.getElementById("deviceName")).value;
+            var deviceDescription = (<HTMLInputElement>document.getElementById("deviceDescription")).value;  
+            var deviceStatus = (<HTMLInputElement>document.getElementById("deviceStatus")).checked;
+            var deviceStatusNum = Number(deviceStatus);
+            var deviceType = (<HTMLInputElement>document.getElementById("deviceType")).value;
+            var deviceIntensity = (<HTMLInputElement>document.getElementById("deviceIntensity")).value;
+            if ((deviceName != null) && (deviceName != "") && 
+                (deviceDescription != null) && (deviceDescription != "")) {
+                this.addDevice(deviceName, deviceDescription, deviceStatusNum, deviceType, deviceIntensity);
+                alert("¡Dispositivo agregado exitósamente!")
+                if (this.showDevices) {
+                    this.obtenerDispositivos(); 
+                }            
+            } else {
+                alert("Debe completar el nombre y la descripción del dispositivo")
+            }           
+        } else if (elemento.id.startsWith("ed_")) {
+            // Lógica al ejecutarse el botón Editar del dispositivo
+            this.getDeviceInfo(elemento.id.replace('ed_', ''))          
+        } else if (event.target.id == "btnEditar") {
+            // Lógica al ejecutarse el editar del modal
+            var deviceId = (<HTMLInputElement>document.getElementById("deviceId")).innerHTML;
+            var deviceName = (<HTMLInputElement>document.getElementById("deviceNameEdit")).value;
+            var deviceDescription = (<HTMLInputElement>document.getElementById("deviceDescriptionEdit")).value;
+            var deviceType = (<HTMLInputElement>document.getElementById("deviceTypeEdit")).value;
+            if ((deviceName != null) && (deviceName != "") && 
+                (deviceDescription != null) && (deviceDescription != "")) {
+                this.updateDevice(deviceId, deviceName, deviceDescription, deviceType);
+                alert("¡Dispositivo editado exitósamente!")
+                this.obtenerDispositivos();                            
+            } else {
+                alert("Debe completar el nombre y la descripción del dispositivo")
+            }           
+        } else if (elemento.id.startsWith("int_")) {
+            // Lógica a ejecutarse cuando se modifique el valor de intensidad/apertura del dispositivo
+            var intensity = (<HTMLInputElement>document.getElementById(elemento.id)).value;
+            this.updateIntensity(elemento.id.replace('int_', ''), intensity);
+        }
+    }
 }
 
-    
 window.addEventListener("load", () => {
-
+    // Incialización de componentes de materialize
     var elems = document.querySelectorAll('select');
     M.FormSelect.init(elems, "");
     var elemsModal = document.querySelectorAll('.modal');
-    var instances = M.Modal.init(elemsModal, "");
+    var instances = M.Modal.init(elemsModal, {});
 
-    let main1: Main = new Main();
-    let boton = document.getElementById("btnListar");
-    
-    boton.addEventListener("click", main1);   
+    // Conexión de los botones a eventos
+    var main1: Main = new Main();
+    var btnListar: HTMLElement = document.getElementById("btnListar");
+    btnListar.addEventListener("click", main1);
+  
+    var btnAgregar: HTMLElement = document.getElementById("btnAgregar");
+    btnAgregar.addEventListener("click", main1);
 
-    let botonGuardar = document.getElementById("btnGuardar");
-    botonGuardar.addEventListener("click",main1);
+    var btnEditar: HTMLElement = document.getElementById("btnEditar");
+    btnEditar.addEventListener("click", main1);
 
-    let checkbox = document.getElementById("cb");
-    checkbox.addEventListener("click", main1);
-    
-
-
+    var btnEliminar: HTMLElement = document.getElementById("btnEliminar");
+    btnEliminar.addEventListener("click", main1);
 });
-

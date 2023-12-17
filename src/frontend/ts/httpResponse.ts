@@ -1,5 +1,5 @@
 interface HttpResponse{
 
-    manejarRespueta(response: string);
+    manejarRespuesta(response: string);
     mostrarDatosEdit(response: string);
   }

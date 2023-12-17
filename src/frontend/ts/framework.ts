@@ -8,7 +8,7 @@ class Framework{
               if (isEdit) {
                 callback.mostrarDatosEdit(xmlReq.responseText);
               } else {
-                callback.manejarRespueta(xmlReq.responseText);
+                callback.manejarRespuesta(xmlReq.responseText);
               }       
               } else {
                   alert("Error al buscar los datos!");

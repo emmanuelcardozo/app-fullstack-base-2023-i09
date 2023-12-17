@@ -1,15 +1,17 @@
 <!DOCTYPE html>
   <html>
     <head>
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <link type="text/css" rel="stylesheet" href="./static/css/materialize.min.css"  media="screen,projection"/>
-      <link type="text/css" rel="stylesheet" href="./static/css/styles.css"  media="screen,projection"/>
-      <script type="text/javascript" src="./static/js/materialize.min.js"></script>
-      <script type="text/javascript" src="js/persona.js"></script>
-      <script type="text/javascript" src="js/usuario.js"></script>
-      <script type="text/javascript" src="js/device.js"></script>
-      <script type="text/javascript" src="js/main.js"></script>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="./static/css/materialize.min.css"  media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="./static/css/styles.css"  media="screen,projection"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <script type="text/javascript" src="static/js/materialize.min.js"></script>
+        <script type="text/javascript" src="js/persona.js"></script>
+        <script type="text/javascript" src="js/usuario.js"></script>
+        <script type="text/javascript" src="js/device.js"></script>
+        <script type="text/javascript" src="js/framework.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
         <header>
@@ -22,69 +24,73 @@
                     </ul>
                 </div>
             </nav>	
-        </header>
-                    
-        <!-- Page Body -->
-            <div class="container">    
-                <br/>            
+        </header>    
+        
+        <main>        
+            <div class="container">                
                 <h3>Smart Home Web Client!</h3>
-                <br/>
                 <div class="row">
-                    <div class="col s12 m8 l4 x16">
+                    <div class="col s12 m8 l4 xl6">
                         <button class="btn waves-effect waves-light button-view" id="btnListar" name="hello_button">Listar</button>
+                        <p>Visualice, controle y edite los dispositivos asociados a su cuenta</p>
                     </div>
-                    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Agregar nuevo dispositivo</a>
-                    
-                    <!-- Modal Structure -->
-                    <div id="modal1" class="modal">
-                        <div class="modal-content">
-                            <h4>Agregar nuevo dispositivo</h4>
-                            <div class="row">
-                                <form class="col s12">
-                                    <div class="row">
-                                        <div class="input-field col s6">
-                                            <input id="deviceName" type="text" class="validate">
-                                            <label for="deviceName">Nombre del dispositivo</label>
-                                        </div>
-                                    <div class="input-field col s6">
-                                        <input id="deviceDescription" type="text" class="validate">
-                                        <label for="deviceDescription">Descripción del dispositivo</label>
-                                    </div>
-                                    </div>
-                                        <div class="row">
-                                            <div class="input-field col s6">
-                                                <select id="deviceType">
-                                                    <option value="0">Lámpara</option>
-                                                    <option value="1">Persiana</option>
-                                                </select>
-                                                <label>Seleccione el tipo de dispositivo</label>
-                                            </div>
-                                        <div class="input-field col s6">
-                                            <div class="switch">
-                                            <label>
-                                                Apagado
-                                                <input type="checkbox" checked id="deviceStatus">`;
-                                                <span class="lever"></span>
-                                                Encendido
-                                            </label>
-                                        </div>
-                                    </div>                               
-                                    </div>
-                                        <div class="row">
-                                            <div class="input-field col s12"></div>
-                                                <p class="range-field">
-                                                    <label>Intensidad/Apertura dispositivo</label>
-                                                    <input type="range" id="deviceIntensity" min="0" max="100" value="100"/>
-                                                </p>
-                                            </div>
-                                </form>
-                            </div>           
-                        </div>
-                        <div class="modal-footer">
-                            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
-                            <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="btnAgregar">Agregar</a>
-                        </div>
+                    <div class="col s12 m4 l8 xl6 ">
+                        <!-- Modal Trigger -->
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Agregar dispositivo</a>
+                        <p>Agregue nuevos dispositivos asociados a su cuenta</p>
                     </div>
+                </div>
+                
+                <!-- Modal Structure -->
+                <div id="modal1" class="modal">
+                    <div class="modal-content">
+                        <h4>Agregar nuevo dispositivo</h4>
+                        <div class="row">
+                            <form class="col s12">
+                              <div class="row">
+                                <div class="input-field col s6">
+                                    <input id="deviceName" type="text" class="validate">
+                                    <label for="deviceName">Nombre del dispositivo</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input id="deviceDescription" type="text" class="validate">
+                                    <label for="deviceDescription">Descripción del dispositivo</label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="input-field col s6">
+                                    <select id="deviceType">
+                                        <option value="0">Lámpara</option>
+                                        <option value="1">Persiana</option>
+                                    </select>
+                                    <label>Seleccione el tipo de dispositivo</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <div class="switch">
+                                        <label>
+                                            Apagado
+                                            <input type="checkbox" checked id="deviceStatus">`;
+                                            <span class="lever"></span>
+                                            Prendido
+                                        </label>
+                                    </div>
+                                </div>                               
+                              </div>
+                              <div class="row">
+                                <div class="input-field col s12"></div>
+                                    <p class="range-field">
+                                        <label>Intensidad de la lámpara/Apertura de la persiana</label>
+                                        <input type="range" id="deviceIntensity" min="0" max="100" value="100"/>
+                                    </p>
+                              </div>
+                            </form>
+                          </div>           
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="btnAgregar">Agregar</a>
+                    </div>
+                </div>
 
                 <!-- Modal Structure -->
                 <div id="modal2" class="modal">
@@ -121,6 +127,7 @@
                     </div>
                 </div>
 
+                <!-- Modal Structure -->
                 <div id="modal3" class="modal">
                     <div class="modal-content">
                         <h4>Eliminar</h4>
@@ -137,24 +144,13 @@
                     <!-- Switch -->
                     <ul class="collection" id="listaDisp">                                      
                     </ul>
-                </div>   
-            </div>	
+                </div>
+                <a class="waves-effect waves-light btn modal-trigger" href="#modal4">Agregar nuevo usuario</a>
 
-            </div>
-        
-        <main>
-            <div class="container">
-                <div class="row">
-                    <div id="lista" miAtt="true" class="col s12 m6 l6">
-                        <ul class="collection" id="listaDisp">
-                        </ul>
-                    </div>
-
-                    <a class="waves-effect waves-light btn modal-trigger" href="#modal4">Cargar nuevo usuario</a>
-                    <!-- Modal Structure -->
-                    <div id="modal4" class="modal">
-                        <div class="modal-content">
-                            <div class="col s12 m6 l6">
+                <!-- Modal Structure -->
+                <div id="modal4" class="modal">
+                    <div class="modal-content">
+                        <div class="col s12 m6 l6">
                             <h1>Cargar usuario</h1>
                             <label for="iNombre">Nombre de usuario</label>
                             <input id="iNombre" type="text" value="" placeholder="jlopez" />
@@ -163,6 +159,7 @@
                                 <input id="iPassword" type="password" class="validate">
                                 <label for="iPassword">Password</label>
                             </div>
+            
                             <p>
                                 <label>
                                     <input type="checkbox"  />
@@ -170,32 +167,22 @@
                                 </label>
                             </p>
                             <p id="pInfo"  ></p>
+            
                             <button id="btnGuardar" class="modal-close  btn">Guardar</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-             
-                <br/>
-                <h3>Quienes somos</h3>
-                <br/>
-                <div class="row">
-                    <div class="input-field col s12 m12 l12 xl12">
-                        <textarea id="textarea_1" class="materialize-textarea" style="height: 150px;" readonly></textarea>
-                    </div>
-                </div>
-            </div>	
+                    </div>   
+                </div>	
         </main>
 		<!-- Page Footer -->
-        <footer class="page-footer" style="background-color:#052051">
+        <footer class="page-footer" style="background-color:#124580">
             <div class="container">
                 <div class="row">
                     <div class="col l6 s6">
                         <h5 class="black-text">Smart Home</h5>
-                        <p class="black-text text-lighten-4">Copyright 2023</p>
+                        <p class="black-text text-lighten-4">Copyright ### - 2021</p>
                     </div>
                     <div class="col l6 s6">
-                        <h5 class="black-text right-align">Contáctenos</h5>
+                        <h5 class="black-text right-align">Contact</h5>
                         <p class="black-text right-align">
                             <a class="black-text text-lighten-3" href="!#">Email | </a>
                             <a class="black-text text-lighten-3" href="!#">Twitter | </a>
