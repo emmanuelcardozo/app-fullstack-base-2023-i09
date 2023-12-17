@@ -38,6 +38,7 @@ CREATE TABLE `Devices` (
   `description` varchar(128) NOT NULL,
   `state` int(11) NOT NULL,
   `type` int(11) NOT NULL
+  `intensity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
